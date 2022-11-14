@@ -1,0 +1,1 @@
+<template>person index</template>
