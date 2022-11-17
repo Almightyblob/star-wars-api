@@ -1,11 +1,11 @@
 <template>
   <p v-if="store.isLoading">Getting data...</p>
   <div v-else>
-    <input
-      v-model="searchWord"
-      type="text"
-      @keypress.enter="() => store.search(searchWord)"
-    />
+    <div class="flex flex-row justify-center items-center | space-x-4 | mb-4">
+      <TextSearch />
+      <SpeciesFilter :speciesList="species || []" />
+      <RangeFilter />
+    </div>
     <RouterLink
       v-for="(person, index) in store.searchResults"
       :to="'/person/' + index"
@@ -20,5 +20,5 @@
 <script setup>
 import { useDataStore } from "@/stores/data";
 const store = useDataStore();
-const searchWord = ref("");
+const species = localStorage.species ? JSON.parse(localStorage.species) : [];
 </script>

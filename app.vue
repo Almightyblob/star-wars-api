@@ -11,9 +11,8 @@
 
 <script setup>
 import { useDataStore } from "@/stores/data";
-import { Fragment } from "vue";
 const store = useDataStore();
-store.fetchData();
+if (!localStorage.people) store.fetchData();
 </script>
 
 <style>

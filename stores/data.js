@@ -1,11 +1,16 @@
 import { ref } from "vue";
 import { defineStore } from "pinia";
 import axios from "redaxios";
+import { useStorage } from "@vueuse/core";
 
 export const useDataStore = defineStore("data", () => {
-  const data = ref([]);
-  const isLoading = ref(true);
-  const searchResults = ref([]);
+  const people = ref(
+    localStorage.people ? JSON.parse(localStorage.people) : []
+  );
+  const isLoading = ref(localStorage.people ? false : true);
+  const searchResults = ref(
+    localStorage.people ? JSON.parse(localStorage.people) : []
+  );
 
   async function fetchData() {
     const promises = [];
@@ -18,13 +23,15 @@ export const useDataStore = defineStore("data", () => {
         promises.push(response);
         nextPage = response.next;
         dataArray = [...dataArray, ...response.results];
+        console.log(response);
       }
       return dataArray;
     }
 
-    const people = await getData("https://swapi.dev/api/people");
-    const movies = await getData("https://swapi.dev/api/films");
-    const species = await getData("https://swapi.dev/api/species");
+    const peopleResponse = await getData("https://swapi.dev/api/people");
+    const moviesResponse = await getData("https://swapi.dev/api/films");
+    const speciesResponse = await getData("https://swapi.dev/api/species");
+    const planetsResponse = await getData("https://swapi.dev/api/planets");
 
     function getIndexFromUrl(url) {
       return +url.replace(/[^0-9]/g, "") - 1;
@@ -32,37 +39,55 @@ export const useDataStore = defineStore("data", () => {
 
     Promise.allSettled(promises)
       .then(
-        people.forEach((person) => {
+        peopleResponse.forEach((person) => {
           person.films.forEach((film, index) => {
-            person.films[index] = movies[getIndexFromUrl(film)]?.title;
+            person.films[index] = moviesResponse[getIndexFromUrl(film)]?.title;
           });
-          console.log(person.species.length);
           if (person.species.length === 0) {
             person.species = "Human";
           } else {
-            person.species = species[getIndexFromUrl(person.species[0])].name;
+            person.species =
+              speciesResponse[getIndexFromUrl(person.species[0])].name;
           }
+          person.homeworld =
+            planetsResponse[getIndexFromUrl(person.homeworld)].name;
         }),
-        ((data.value = [...people]), (searchResults.value = [...data.value]))
+        ((people.value = [...peopleResponse]),
+        (searchResults.value = [...people.value]),
+        speciesResponse.map((species) => species.name),
+        useStorage("people", JSON.stringify(people.value)),
+        useStorage(
+          "species",
+          JSON.stringify(speciesResponse.map((species) => species.name))
+        ))
       )
       .then((isLoading.value = false));
   }
 
   function search(searchWord) {
     if (searchWord.length > 0) {
-      const dataCopy = [...data.value];
-      searchResults.value = dataCopy.filter((person) => {
-        return (
-          person.name.toUpperCase().includes(searchWord.toUpperCase()) ||
-          person.films.some((film) =>
-            film.toUpperCase().includes(searchWord.toUpperCase())
-          )
-        );
+      const peopleCopy = [...people.value];
+      searchResults.value = peopleCopy.filter((person) => {
+        return person.name.toUpperCase().includes(searchWord.toUpperCase());
       });
     } else {
-      searchResults.value = [...data.value];
+      searchResults.value = [...people.value];
     }
   }
 
-  return { data, isLoading, fetchData, search, searchResults };
+  function filterBySpecies(searchValue) {
+    console.log("species filter", searchValue);
+    searchResults.value = people.value.filter((person) =>
+      searchValue === "" ? true : person.species === searchValue
+    );
+  }
+
+  return {
+    people,
+    isLoading,
+    fetchData,
+    search,
+    searchResults,
+    filterBySpecies,
+  };
 });
