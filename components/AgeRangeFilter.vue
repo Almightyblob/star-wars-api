@@ -5,7 +5,7 @@
       :min="min"
       :max="max"
       class="slider-blue"
-      @input="(value) => updateValue(value)"
+      @input="(value) => setAgeRangeFilter(value)"
     />
   </div>
 </template>
@@ -27,16 +27,20 @@ const min = Math.min(...birth_years);
 const max = Math.max(...birth_years);
 const range = ref([min, max]);
 
-function updateValue(value) {
+function setAgeRangeFilter(value) {
   range.value = value;
-  store.filterByBirthYear(range.value);
+  store.birthYearRange = range.value;
+  store.filter();
 }
 </script>
 
-<style src="@vueform/slider/themes/default.css">
-.slider-blue {
-  --slider-connect-bg: #3b82f6;
-  --slider-tooltip-bg: #3b82f6;
-  --slider-handle-ring-color: #3b82f630;
+<style>
+@import "@vueform/slider/themes/default.css";
+.slider-connect {
+  @apply bg-blue-500;
+}
+
+.slider-tooltip {
+  @apply bg-blue-500 border-blue-500;
 }
 </style>

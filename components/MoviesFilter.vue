@@ -9,7 +9,7 @@
         class="accent-yellow-400"
         type="checkbox"
         :value="movie"
-        @change="() => store.filterByMovies(movies)"
+        @change="() => setMoviesFilter(movies)"
       />
       <span class="text-xs text-blue-500" v-text="movie" />
     </div>
@@ -27,4 +27,9 @@ const props = defineProps({
   },
 });
 const movies = ref([]);
+
+function setMoviesFilter(selectedMovies) {
+  store.filteredMovies = selectedMovies;
+  store.filter();
+}
 </script>

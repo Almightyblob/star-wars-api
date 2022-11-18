@@ -1,11 +1,10 @@
 <template>
   <div class="w-[90%] flex flex-col">
-    <span class="text-xs text-blue-500 font-bold"> FILTER BY SPECIES </span>
     <select
       multiple
       v-model="selected"
       class="bg-slate-900 border border-blue-500 rounded-md focus:outline-none | p-1"
-      @change="() => store.filterBySpecies(selected)"
+      @change="() => setSpeciesFilter(selected)"
     >
       <option v-for="species in speciesList" :value="species">
         {{ species }}
@@ -25,8 +24,10 @@ const props = defineProps({
     required: true,
   },
 });
-function select(e) {
-  console.log(selected);
+
+function setSpeciesFilter(selectedSpecies) {
+  store.filteredSpecies = selectedSpecies;
+  store.filter();
 }
 </script>
 

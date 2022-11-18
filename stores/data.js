@@ -7,16 +7,25 @@ export const useDataStore = defineStore("data", () => {
   const people = ref(
     localStorage.people ? JSON.parse(localStorage.people) : []
   );
+
   const isLoading = ref(localStorage.people ? false : true);
+
   const searchResults = ref(
     localStorage.people ? JSON.parse(localStorage.people) : []
   );
+
   const species = ref(
     localStorage.species ? JSON.parse(localStorage.species) : []
   );
+
   const movies = ref(
     localStorage.movies ? JSON.parse(localStorage.movies) : []
   );
+
+  const nameSearchWord = ref();
+  const birthYearRange = ref();
+  const filteredSpecies = ref();
+  const filteredMovies = ref();
 
   async function fetchData() {
     const promises = [];
@@ -75,60 +84,51 @@ export const useDataStore = defineStore("data", () => {
       .then((isLoading.value = false));
   }
 
-  function search(searchWord) {
-    if (searchWord.length > 0) {
-      const peopleCopy = [...people.value];
-      searchResults.value = peopleCopy.filter((person) => {
-        return person.name.toUpperCase().includes(searchWord.toUpperCase());
+  function filter() {
+    searchResults.value = [...people.value];
+    console.log(filteredMovies.value);
+
+    if (nameSearchWord.value)
+      searchResults.value = searchResults.value.filter((person) => {
+        return person.name
+          .toUpperCase()
+          .includes(nameSearchWord.value.toUpperCase());
       });
-    } else {
-      searchResults.value = [...people.value];
-    }
-  }
 
-  function filterByBirthYear(range) {
-    console.log(range);
-    searchResults.value = people.value.filter((person) => {
-      if (person.birth_year !== "unknown") {
-        return (
-          +person.birth_year.slice(0, -3) >= range[0] &&
-          +person.birth_year.slice(0, -3) <= range[1]
-        );
-      }
-    });
-  }
+    if (birthYearRange.value)
+      searchResults.value = searchResults.value.filter((person) => {
+        if (person.birth_year !== "unknown") {
+          return (
+            +person.birth_year.slice(0, -3) >= birthYearRange.value[0] &&
+            +person.birth_year.slice(0, -3) <= birthYearRange.value[1]
+          );
+        }
+      });
 
-  function filterBySpecies(filteredSpecies) {
-    if (filteredSpecies.length > 0) {
-      searchResults.value = people.value.filter((person) =>
-        filteredSpecies.some((species) => species === person.species)
+    if (filteredSpecies.value && filteredSpecies.value.length !== 0) {
+      searchResults.value = searchResults.value.filter((person) =>
+        filteredSpecies.value.some((species) => species === person.species)
       );
-    } else {
-      searchResults.value = [...people.value];
     }
-  }
 
-  function filterByMovies(filteredMovies) {
-    console.log(filteredMovies);
-    if (filteredMovies.length > 0) {
-      searchResults.value = people.value.filter((person) =>
-        filteredMovies.every((movie) => person.films.includes(movie))
+    if (filteredMovies.value && filteredMovies.value.length !== 0) {
+      searchResults.value = searchResults.value.filter((person) =>
+        filteredMovies.value.some((movie) => person.films.includes(movie))
       );
-    } else {
-      searchResults.value = [...people.value];
     }
   }
 
   return {
     people,
+    searchResults,
     isLoading,
     species,
     movies,
     fetchData,
-    search,
-    searchResults,
-    filterBySpecies,
-    filterByMovies,
-    filterByBirthYear,
+    nameSearchWord,
+    birthYearRange,
+    filteredSpecies,
+    filteredMovies,
+    filter,
   };
 });

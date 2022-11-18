@@ -1,7 +1,7 @@
 <template>
   <div class="pt-8 px-4">
     <header>
-      <h1 class="text-3xl text-center | mb-4">Star Wars API</h1>
+      <h1 class="text-3xl text-center | mb-4">STAR WARS API</h1>
     </header>
     <div>
       <NuxtPage />
