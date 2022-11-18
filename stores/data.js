@@ -86,6 +86,18 @@ export const useDataStore = defineStore("data", () => {
     }
   }
 
+  function filterByBirthYear(range) {
+    console.log(range);
+    searchResults.value = people.value.filter((person) => {
+      if (person.birth_year !== "unknown") {
+        return (
+          +person.birth_year.slice(0, -3) >= range[0] &&
+          +person.birth_year.slice(0, -3) <= range[1]
+        );
+      }
+    });
+  }
+
   function filterBySpecies(filteredSpecies) {
     if (filteredSpecies.length > 0) {
       searchResults.value = people.value.filter((person) =>
@@ -117,5 +129,6 @@ export const useDataStore = defineStore("data", () => {
     searchResults,
     filterBySpecies,
     filterByMovies,
+    filterByBirthYear,
   };
 });

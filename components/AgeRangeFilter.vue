@@ -1,11 +1,21 @@
 <template>
   <div class="w-[90%]">
-    <Slider v-model="range" :min="min" :max="max" class="slider-blue" />
+    <Slider
+      :value="range"
+      :min="min"
+      :max="max"
+      class="slider-blue"
+      @input="(value) => updateValue(value)"
+    />
   </div>
 </template>
 
 <script setup>
 import Slider from "@vueform/slider";
+import { useDataStore } from "@/stores/data";
+
+const store = useDataStore();
+
 const birth_years = JSON.parse(localStorage.people)
   .map((person) => person.birth_year)
   .map((year) => {
@@ -16,6 +26,11 @@ const birth_years = JSON.parse(localStorage.people)
 const min = Math.min(...birth_years);
 const max = Math.max(...birth_years);
 const range = ref([min, max]);
+
+function updateValue(value) {
+  range.value = value;
+  store.filterByBirthYear(range.value);
+}
 </script>
 
 <style src="@vueform/slider/themes/default.css">

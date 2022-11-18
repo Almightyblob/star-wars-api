@@ -5,7 +5,7 @@
       multiple
       v-model="selected"
       class="bg-slate-900 border border-blue-500 rounded-md focus:outline-none | p-1"
-      @change="(e) => store.filterBySpecies(selected)"
+      @change="() => store.filterBySpecies(selected)"
     >
       <option v-for="species in speciesList" :value="species">
         {{ species }}
