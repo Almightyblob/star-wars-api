@@ -17,7 +17,9 @@
       </div>
 
       <div class="h-full">
-        <p class="text-xs text-blue-500 font-bold | mb-2">SEARCH BY SPECIES</p>
+        <p class="text-xs text-blue-500 font-bold | mb-2">
+          SEARCH BY SPECIES (hold CTRL for multiple)
+        </p>
         <SpeciesFilter :speciesList="species" />
       </div>
 

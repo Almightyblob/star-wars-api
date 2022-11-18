@@ -86,16 +86,16 @@ export const useDataStore = defineStore("data", () => {
 
   function filter() {
     searchResults.value = [...people.value];
-    console.log(filteredMovies.value);
 
-    if (nameSearchWord.value)
+    if (nameSearchWord.value) {
       searchResults.value = searchResults.value.filter((person) => {
         return person.name
           .toUpperCase()
           .includes(nameSearchWord.value.toUpperCase());
       });
+    }
 
-    if (birthYearRange.value)
+    if (birthYearRange.value) {
       searchResults.value = searchResults.value.filter((person) => {
         if (person.birth_year !== "unknown") {
           return (
@@ -104,6 +104,7 @@ export const useDataStore = defineStore("data", () => {
           );
         }
       });
+    }
 
     if (filteredSpecies.value && filteredSpecies.value.length !== 0) {
       searchResults.value = searchResults.value.filter((person) =>
