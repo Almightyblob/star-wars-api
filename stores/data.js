@@ -11,6 +11,12 @@ export const useDataStore = defineStore("data", () => {
   const searchResults = ref(
     localStorage.people ? JSON.parse(localStorage.people) : []
   );
+  const species = ref(
+    localStorage.species ? JSON.parse(localStorage.species) : []
+  );
+  const movies = ref(
+    localStorage.movies ? JSON.parse(localStorage.movies) : []
+  );
 
   async function fetchData() {
     const promises = [];
@@ -37,6 +43,8 @@ export const useDataStore = defineStore("data", () => {
       return +url.replace(/[^0-9]/g, "") - 1;
     }
 
+    //Once all data is loaded, mutate the data for easier local search
+    //and add it to the store and local storage
     Promise.allSettled(promises)
       .then(
         peopleResponse.forEach((person) => {
@@ -54,12 +62,15 @@ export const useDataStore = defineStore("data", () => {
         }),
         ((people.value = [...peopleResponse]),
         (searchResults.value = [...people.value]),
-        speciesResponse.map((species) => species.name),
         useStorage("people", JSON.stringify(people.value)),
         useStorage(
           "species",
           JSON.stringify(speciesResponse.map((species) => species.name))
-        ))
+        )),
+        useStorage(
+          "movies",
+          JSON.stringify(moviesResponse.map((movie) => movie.title))
+        )
       )
       .then((isLoading.value = false));
   }
@@ -76,15 +87,22 @@ export const useDataStore = defineStore("data", () => {
   }
 
   function filterBySpecies(searchValue) {
-    console.log("species filter", searchValue);
-    searchResults.value = people.value.filter((person) =>
-      searchValue === "" ? true : person.species === searchValue
-    );
+    const speciesSearch = [...searchValue];
+    console.log("species filter", speciesSearch);
+    if (searchValue.length > 0) {
+      searchResults.value = people.value.filter((person) =>
+        speciesSearch.some((species) => species === person.species)
+      );
+    } else {
+      searchResults.value = [...people.value];
+    }
   }
 
   return {
     people,
     isLoading,
+    species,
+    movies,
     fetchData,
     search,
     searchResults,

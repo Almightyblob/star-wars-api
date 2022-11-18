@@ -1,10 +1,11 @@
 <template>
   <p v-if="store.isLoading">Getting data...</p>
   <div v-else>
-    <div class="flex flex-row justify-center items-center | space-x-4 | mb-4">
+    <div class="grid grid-cols-4 justify-center items-center | mb-4 m-2">
       <TextSearch />
-      <SpeciesFilter :speciesList="species || []" />
-      <RangeFilter />
+      <AgeRangeFilter />
+      <SpeciesFilter :speciesList="species" />
+      <MoviesFilter :movieList="movies" />
     </div>
     <RouterLink
       v-for="(person, index) in store.searchResults"
@@ -20,5 +21,6 @@
 <script setup>
 import { useDataStore } from "@/stores/data";
 const store = useDataStore();
-const species = localStorage.species ? JSON.parse(localStorage.species) : [];
+const species = store.species;
+const movies = store.movies;
 </script>

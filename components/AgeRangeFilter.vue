@@ -1,5 +1,5 @@
 <template>
-  <div class="w-56">
+  <div class="w-[90%]">
     <Slider v-model="range" :min="min" :max="max" class="slider-blue" />
   </div>
 </template>

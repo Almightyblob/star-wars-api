@@ -5,7 +5,9 @@
     <p v-text="person.name" />
     <p v-text="person.birth_year" />
     <p v-text="person.species" />
-    <p v-text="person.name" />
+    <ul>
+      <li v-for="film in person.films" v-text="film"></li>
+    </ul>
   </div>
 </template>
 
