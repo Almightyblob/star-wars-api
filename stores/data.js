@@ -86,12 +86,21 @@ export const useDataStore = defineStore("data", () => {
     }
   }
 
-  function filterBySpecies(searchValue) {
-    const speciesSearch = [...searchValue];
-    console.log("species filter", speciesSearch);
-    if (searchValue.length > 0) {
+  function filterBySpecies(filteredSpecies) {
+    if (filteredSpecies.length > 0) {
       searchResults.value = people.value.filter((person) =>
-        speciesSearch.some((species) => species === person.species)
+        filteredSpecies.some((species) => species === person.species)
+      );
+    } else {
+      searchResults.value = [...people.value];
+    }
+  }
+
+  function filterByMovies(filteredMovies) {
+    console.log(filteredMovies);
+    if (filteredMovies.length > 0) {
+      searchResults.value = people.value.filter((person) =>
+        filteredMovies.every((movie) => person.films.includes(movie))
       );
     } else {
       searchResults.value = [...people.value];
@@ -107,5 +116,6 @@ export const useDataStore = defineStore("data", () => {
     search,
     searchResults,
     filterBySpecies,
+    filterByMovies,
   };
 });

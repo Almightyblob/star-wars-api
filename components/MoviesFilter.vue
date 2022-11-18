@@ -9,6 +9,7 @@
         class="accent-yellow-400"
         type="checkbox"
         :value="movie"
+        @change="() => store.filterByMovies(movies)"
       />
       <span class="text-xs text-blue-500" v-text="movie" />
     </div>
@@ -16,11 +17,14 @@
 </template>
 
 <script setup>
+import { useDataStore } from "@/stores/data";
+
+const store = useDataStore();
 const props = defineProps({
   movieList: {
     type: Array,
     required: true,
   },
 });
-const movies = ref([...props.movieList]);
+const movies = ref([]);
 </script>
