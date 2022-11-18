@@ -8,7 +8,7 @@
       >
         {{ store.people[$route.params.id].name }}
       </h2>
-      <div class="mr-2">
+      <div class="shrink-0 | mr-2">
         <p>Height:</p>
         <p>Hair Color:</p>
         <p>Skin Color:</p>
